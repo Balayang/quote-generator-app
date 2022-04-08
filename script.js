@@ -1,18 +1,30 @@
 //SELECT ELEMENTS
-
 const quoteContainer = document.querySelector('.quote-container');
 const quoteText = document.querySelector('.quote-text');
 const authorText = document.querySelector('.quote-author');
+const loader = document.querySelector('.loader');
 
 //SET VARIABLES
 let apiQuotes = [];
 const apiURL = 'https://type.fit/api/quotes';
 
+//HIDE LOADING
+function complete() {
+	loader.hidden = true;
+	quoteContainer.hidden = false;
+}
+
+//SHOW LOADING
+function loading() {
+	loader.hidden = false;
+	quoteContainer.hidden = true;
+}
+
 //FUNCTION NEW QUOTE
 function newQuote() {
-	//pick a random quote from apiQuotes array
-	const quote = apiQuotes[Math.floor(Math.random() * apiQuotes.length)];
+	loading();
 
+	const quote = apiQuotes[Math.floor(Math.random() * apiQuotes.length)];
 	//check if Author field is blank and replace is with 'unknown'
 	if (!quote.author) {
 		authorText.textContent = 'Unknown';
@@ -27,12 +39,14 @@ function newQuote() {
 		quoteText.classList.remove('long-quote');
 	}
 
-	//insert quote text
+	//set quote, hide loader
 	quoteText.textContent = quote.text;
+	complete();
 }
 
 //GET QUOTES FROM API
 async function getQuotes() {
+	loading();
 	try {
 		const response = await fetch(apiURL);
 		apiQuotes = await response.json();
